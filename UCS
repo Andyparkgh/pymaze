@@ -1,0 +1,48 @@
+def uniform_cost_search(maze):
+    start = maze.start
+    goal = maze.goal
+
+    # Initialize the priority queue with the start node and its cost
+    queue = [(start, 0)]
+
+    # Initialize a dictionary to keep track of visited nodes
+    visited = {start: None}
+
+    # Initialize a dictionary to keep track of the cost to reach each node
+    cost_so_far = {start: 0}
+
+    while queue:
+        # Pop the node with the lowest cost from the priority queue
+        current, current_cost = queue.pop(0)
+
+        # If the current node is the goal, construct and return the path
+        if current == goal:
+            path = []
+            while current is not None:
+                path.append(current)
+                current = visited[current]
+            path.reverse()
+            return path, current_cost
+
+        # Iterate over the neighbors of the current node
+        for neighbor in maze.neighbors(current):
+            # Calculate the cost to move to the neighbor
+            if neighbor[0] == current[0]:  # Horizontal movement
+                neighbor_cost = current_cost + 0.9
+            else:  # Vertical movement
+                neighbor_cost = current_cost + 1.1
+
+            # If the neighbor has not been visited or the new cost is lower
+            if neighbor not in cost_so_far or neighbor_cost < cost_so_far[neighbor]:
+                # Update the cost to reach the neighbor
+                cost_so_far[neighbor] = neighbor_cost
+                # Add the neighbor to the priority queue with its cost
+                queue.append((neighbor, neighbor_cost))
+                # Mark the current node as the previous node for the neighbor
+                visited[neighbor] = current
+
+        # Sort the priority queue based on the cost
+        queue.sort(key=lambda x: x[1])
+
+    # If no path is found, return None
+    return None, None
